@@ -1,0 +1,473 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="330dp"
+    android:layout_height="wrap_content">
+
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_marginTop="5dp"
+            android:layout_height="wrap_content">
+            <androidx.cardview.widget.CardView
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:background="@color/teal_700"
+                android:foreground="?attr/selectableItemBackground"
+                app:cardCornerRadius="3dp"
+                app:cardElevation="3dp"
+                app:cardUseCompatPadding="true"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="vertical"
+                    android:padding="5dp">
+                    <EditText
+                        android:id="@+id/iv_ocr_question_title"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:hint="題目標題"
+                        android:gravity="left"
+                        android:inputType="textMultiLine"
+                        android:scrollbars = "vertical"
+                        android:singleLine="false" />
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginTop="3dp"
+                        android:background="@color/black"
+                        />
+                    <EditText
+                        android:id="@+id/iv_scanner_text"
+                        android:layout_width="match_parent"
+                        android:layout_height="250dp"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:hint="OCR 結果"
+                        android:gravity="left"
+                        android:inputType="textMultiLine"
+                        android:scrollbars = "vertical"
+                        android:singleLine="false" />
+                    <LinearLayout
+                        android:id="@+id/question_type"
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"
+                        android:layout_marginStart="2dp"
+                        android:layout_marginEnd="2dp"
+                        android:layout_marginTop="3dp"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:orientation="horizontal"
+                        >
+                        <EditText
+                            android:id="@+id/iv_ocr_question_num"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="38dp"
+                            android:textSize="14sp"
+                            android:textStyle="bold"
+                            android:hint="題號."
+                            android:gravity="left"
+                            android:inputType="textMultiLine"
+                            android:scrollbars = "vertical"
+                            android:singleLine="false" />
+                        <Spinner
+                            android:id="@+id/spinner_question_type"
+                            android:layout_width="0dp"
+                            android:entries="@array/question_type"
+                            android:layout_weight="1"
+                            android:layout_height="38dp" />
+                        <Spinner
+                            android:id="@+id/spinner_question_bank"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="38dp" />
+                    </LinearLayout>
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginTop="3dp"
+                        android:layout_marginBottom="3dp"
+                        android:background="@color/black"
+                        />
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="2dp"
+                        android:layout_marginEnd="2dp"
+                        android:orientation="vertical">
+                        <LinearLayout
+                            android:id="@+id/chooseTag"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="2dp"
+                            android:layout_marginEnd="2dp"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:orientation="horizontal"
+                            >
+                            <TextView
+                                android:id="@+id/tagText"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textColor="#363A43"
+                                android:textSize="14sp"
+                                android:textStyle="bold"
+                                android:text="選擇標籤"
+                                />
+                            <ImageButton
+                                android:id="@+id/ib_chooseTag"
+                                android:layout_width="10dp"
+                                android:layout_height="10dp"
+                                android:layout_marginLeft="130dp"
+                                android:layout_marginTop="5dp"
+                                android:src="@drawable/baseline_keyboard_arrow_down_24"
+                                android:background="@color/white"
+                                />
+
+                        </LinearLayout>
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:layout_marginTop="5dp"
+                            android:background="@color/black"
+                            />
+                        <TextView
+                            android:layout_marginTop="5dp"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textColor="#363A43"
+                            android:textSize="14sp"
+                            android:textStyle="bold"
+                            android:text="題庫標籤"
+                            />
+                        <HorizontalScrollView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            >
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
+                                <co.lujun.androidtagview.TagContainerLayout
+                                    android:id="@+id/scannerTagForBank"
+                                    android:layout_marginTop="5dp"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:padding="5dp"
+                                    app:container_background_color="#00000000"
+                                    app:tag_enable_cross="true"
+                                    app:container_enable_drag="true"
+                                    app:horizontal_interval="3dp"
+                                    app:tag_clickable="true"
+                                    app:tag_theme="random"
+                                    app:tag_text_size="10sp"
+                                    app:vertical_interval="3dp" />
+                            </LinearLayout>
+                        </HorizontalScrollView>
+
+                        <TextView
+                            android:layout_marginTop="5dp"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textColor="#363A43"
+                            android:textSize="14sp"
+                            android:textStyle="bold"
+                            android:text="題目標籤"
+                            />
+                        <HorizontalScrollView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            >
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
+                                <co.lujun.androidtagview.TagContainerLayout
+                                    android:id="@+id/scannerTagForQuestion"
+                                    android:layout_marginTop="5dp"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:padding="5dp"
+                                    app:container_background_color="#00000000"
+                                    app:tag_enable_cross="true"
+                                    app:container_enable_drag="true"
+                                    app:horizontal_interval="3dp"
+                                    app:tag_clickable="true"
+                                    app:tag_theme="random"
+                                    app:tag_text_size="10sp"
+                                    app:vertical_interval="3dp" />
+                            </LinearLayout>
+                        </HorizontalScrollView>
+                        <TextView
+                            android:layout_marginTop="5dp"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textColor="#363A43"
+                            android:textSize="14sp"
+                            android:textStyle="bold"
+                            android:text="範圍標籤"
+                            />
+                        <HorizontalScrollView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            >
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
+                                <co.lujun.androidtagview.TagContainerLayout
+                                    android:id="@+id/scannerTagForRange"
+                                    android:layout_marginTop="5dp"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:padding="5dp"
+                                    app:container_background_color="#00000000"
+                                    app:tag_enable_cross="true"
+                                    app:container_enable_drag="true"
+                                    app:horizontal_interval="3dp"
+                                    app:tag_clickable="true"
+                                    app:tag_theme="random"
+                                    app:tag_text_size="10sp"
+                                    app:vertical_interval="3dp" />
+                            </LinearLayout>
+                        </HorizontalScrollView>
+                        <LinearLayout
+                            android:id="@+id/options_list"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="2dp"
+                            android:layout_marginEnd="2dp"
+                            android:layout_marginTop="3dp"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:orientation="horizontal"
+                            >
+
+                                <LinearLayout
+                                    android:id="@+id/MyOptions"
+                                    android:layout_width="fill_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="25"
+                                    android:layout_marginBottom="9dp"
+                                    android:orientation="vertical"
+                                    >
+                                    <EditText
+                                        android:id="@+id/question_option1"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="50dp"
+                                        android:textSize="14sp"
+                                        android:textStyle="bold"
+                                        android:hint="題目選項 1 (填充以及簡答可略過)"
+                                        android:gravity="left"
+                                        android:inputType="textMultiLine"
+                                        android:scrollbars = "vertical"
+                                        android:singleLine="false" />
+                                    <EditText
+                                        android:id="@+id/question_option2"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="50dp"
+                                        android:textSize="14sp"
+                                        android:textStyle="bold"
+                                        android:hint="題目選項 2 (填充以及簡答可略過)"
+                                        android:gravity="left"
+                                        android:inputType="textMultiLine"
+                                        android:scrollbars = "vertical"
+                                        android:singleLine="false" />
+
+                                    <EditText
+                                        android:id="@+id/question_option3"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="50dp"
+                                        android:gravity="left"
+                                        android:hint="題目選項 3 (填充以及簡答可略過)"
+                                        android:inputType="textMultiLine"
+                                        android:scrollbars="vertical"
+                                        android:singleLine="false"
+                                        android:textSize="14sp"
+                                        android:textStyle="bold" />
+
+                                    <EditText
+                                        android:id="@+id/question_option4"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="50dp"
+                                        android:textSize="14sp"
+                                        android:textStyle="bold"
+                                        android:hint="題目選項 4 (填充以及簡答可略過)"
+                                        android:gravity="left"
+                                        android:inputType="textMultiLine"
+                                        android:scrollbars = "vertical"
+                                        android:singleLine="false" />
+                                    <EditText
+                                        android:id="@+id/question_option5"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="50dp"
+                                        android:textSize="14sp"
+                                        android:textStyle="bold"
+                                        android:hint="題目選項 5 (填充以及簡答可略過)"
+                                        android:gravity="left"
+                                        android:visibility="gone"
+                                        android:inputType="textMultiLine"
+                                        android:scrollbars = "vertical"
+                                        android:singleLine="false" />
+                                    <EditText
+                                        android:id="@+id/question_option6"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="50dp"
+                                        android:textSize="14sp"
+                                        android:textStyle="bold"
+                                        android:hint="題目選項 6 (填充以及簡答可略過)"
+                                        android:visibility="gone"
+                                        android:gravity="left"
+                                        android:inputType="textMultiLine"
+                                        android:scrollbars = "vertical"
+                                        android:singleLine="false" />
+                                    <EditText
+                                        android:id="@+id/question_option7"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="50dp"
+                                        android:textSize="14sp"
+                                        android:textStyle="bold"
+                                        android:hint="題目選項 7 (填充以及簡答可略過)"
+                                        android:gravity="left"
+                                        android:visibility="gone"
+                                        android:inputType="textMultiLine"
+                                        android:scrollbars = "vertical"
+                                        android:singleLine="false" />
+                                    <EditText
+                                        android:id="@+id/question_option8"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="50dp"
+                                        android:textSize="14sp"
+                                        android:textStyle="bold"
+                                        android:hint="題目選項 8 (填充以及簡答可略過)"
+                                        android:gravity="left"
+                                        android:visibility="gone"
+                                        android:inputType="textMultiLine"
+                                        android:scrollbars = "vertical"
+                                        android:singleLine="false" />
+                                    <EditText
+                                        android:id="@+id/question_option9"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="50dp"
+                                        android:textSize="14sp"
+                                        android:textStyle="bold"
+                                        android:hint="題目選項 9 (填充以及簡答可略過)"
+                                        android:visibility="gone"
+                                        android:gravity="left"
+                                        android:inputType="textMultiLine"
+                                        android:scrollbars = "vertical"
+                                        android:singleLine="false" />
+                                    <EditText
+                                        android:id="@+id/question_option10"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="50dp"
+                                        android:textSize="14sp"
+                                        android:textStyle="bold"
+                                        android:hint="題目選項 10 (填充以及簡答可略過)"
+                                        android:visibility="gone"
+                                        android:gravity="left"
+                                        android:inputType="textMultiLine"
+                                        android:scrollbars = "vertical"
+                                        android:singleLine="false" />
+                                </LinearLayout>
+
+                            <ImageButton
+                                android:id="@+id/add_options_button"
+                                android:layout_width="40dp"
+                                android:layout_height="40dp"
+                                android:layout_weight="1"
+                                android:layout_marginStart="10dp"
+                                android:src="@drawable/baseline_add_circle_24"
+                                android:background="@color/white"
+                                android:scaleType="fitXY"
+                                />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/upload_image_answer"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="2dp"
+                            android:layout_marginEnd="2dp"
+                            android:layout_marginTop="3dp"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:orientation="horizontal"
+                            >
+                            <TextView
+                                android:id="@+id/btn_add_answer"
+                                android:layout_width="0dp"
+                                android:layout_height="38dp"
+                                android:layout_weight="1"
+                                android:textStyle="bold"
+                                android:layout_gravity="center"
+                                android:gravity="center"
+                                android:onClick="onClick"
+                                android:clickable="true"
+                                android:background="@drawable/add_answer"
+                                android:text="新增答案   ⬆" />
+
+                            <TextView
+                                android:id="@+id/btn_scan_photo"
+                                android:layout_width="0dp"
+                                android:layout_height="38dp"
+                                android:layout_weight="1"
+                                android:textStyle="bold"
+                                android:layout_gravity="center"
+                                android:layout_marginLeft="5dp"
+                                android:gravity="center"
+                                android:onClick="onClick"
+                                android:clickable="true"
+                                android:background="@drawable/add_image"
+                                android:text="選擇圖片   📂" />
+                        </LinearLayout>
+
+                        <TextView
+                            android:id="@+id/btn_scan_submit"
+                            android:layout_width="match_parent"
+                            android:layout_height="38dp"
+                            android:textStyle="bold"
+                            android:layout_gravity="center"
+                            android:layout_marginTop="5dp"
+                            android:gravity="center"
+                            android:onClick="onClick"
+                            android:textColor="#FFFFFF"
+                            android:clickable="true"
+                            android:background="@drawable/shape_button_rounded"
+                            android:text="確認送出   ✔" />
+                        <TextView
+                            android:id="@+id/btn_scan_cancel"
+                            android:layout_width="match_parent"
+                            android:layout_height="38dp"
+                            android:textStyle="bold"
+                            android:layout_gravity="center"
+                            android:layout_marginTop="5dp"
+                            android:gravity="center"
+                            android:onClick="onClick"
+                            android:textColor="@color/secondary_text_color"
+                            android:clickable="true"
+                            android:layout_marginBottom="3dp"
+                            android:background="@drawable/white_border_shape_button_rounded"
+                            android:text="刪除ocr結果   ❌" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</LinearLayout>
