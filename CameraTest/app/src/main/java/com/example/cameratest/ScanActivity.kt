@@ -62,11 +62,12 @@ class ScanActivity : AppCompatActivity() {
         barcodeView.initializeFromIntent(intent)
         barcodeView.decodeContinuous(callback)
         beepManager = BeepManager(this)
-        val save_btn = findViewById<Button>(R.id.save)
+//        val save_btn = findViewById<Button>(R.id.save)
+        val save_btn = findViewById<de.hdodenhof.circleimageview.CircleImageView>(R.id.save)
         save_btn.setOnClickListener {
             barcodeView.barcodeView.cameraInstance.requestPreview(object : PreviewCallback {
                 override fun onPreview(sourceData: SourceData) {
-                    sourceData.cropRect = Rect(0, 0, 500, 500)
+                    sourceData.cropRect = Rect(0, 0, sourceData.dataHeight, sourceData.dataWidth)
                     val bmp = sourceData.bitmap
                     try {
                         val dir =
