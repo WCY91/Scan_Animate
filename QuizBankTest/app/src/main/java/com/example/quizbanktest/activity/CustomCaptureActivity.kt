@@ -9,6 +9,7 @@ import android.graphics.Rect
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
+import android.os.PersistableBundle
 import android.provider.MediaStore
 import android.util.AttributeSet
 import android.util.Base64
@@ -28,6 +29,7 @@ import com.google.zxing.client.android.BeepManager
 import com.journeyapps.barcodescanner.BarcodeCallback
 import com.journeyapps.barcodescanner.BarcodeResult
 import com.journeyapps.barcodescanner.BarcodeView
+import com.journeyapps.barcodescanner.CaptureManager
 import com.journeyapps.barcodescanner.DecoratedBarcodeView
 import com.journeyapps.barcodescanner.DefaultDecoderFactory
 import com.journeyapps.barcodescanner.ScanContract
@@ -44,27 +46,15 @@ import java.io.File
 import java.io.FileNotFoundException
 import java.io.FileOutputStream
 import java.io.OutputStream
+import java.lang.Exception
 import java.util.Arrays
+
+
 import kotlin.math.roundToInt
 
 
 class CustomCaptureActivity : AppCompatActivity() {
 
-    private val barcodeLauncher = registerForActivityResult<ScanOptions, ScanIntentResult>(
-        ScanContract()
-    ) { result: ScanIntentResult ->
-        if (result.contents == null) {
-            Toast.makeText(this@CustomCaptureActivity, "Cancelled", Toast.LENGTH_LONG).show()
-        } else {
-            Toast.makeText(
-                this@CustomCaptureActivity,
-                "Scanned: " + result.contents,
-                Toast.LENGTH_LONG
-            ).show()
-            val barcodeBitmap = result.contents
-
-        }
-    }
     private lateinit var barcodeView: DecoratedBarcodeView
     private var beepManager: BeepManager? = null
     private var lastText: String? = null
@@ -82,69 +72,38 @@ class CustomCaptureActivity : AppCompatActivity() {
             //Added preview of scanned barcode
             val imageView = findViewById<ImageView>(R.id.barcodePreview)
             imageView.setImageBitmap(result.getBitmapWithResultPoints(Color.YELLOW))
-            Log.e("image", result.getBitmapWithResultPoints(Color.YELLOW).toString())
         }
 
         override fun possibleResultPoints(resultPoints: List<ResultPoint>) {}
     }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(com.example.quizbanktest.R.layout.activity_custom_capture)
-        val options = ScanOptions()
-        options.setDesiredBarcodeFormats(ScanOptions.ONE_D_CODE_TYPES)
-        options.setPrompt("Scan a barcode")
-        options.setCameraId(0) // Use a specific camera of the device
-        options.setBeepEnabled(false)
-        options.setBarcodeImageEnabled(true)
-        options.setBarcodeImageEnabled(true)
-//        barcodeLauncher.launch(options)
-        barcodeView  = findViewById(com.example.quizbanktest.R.id.barcode_scanner)
+        setContentView(R.layout.activity_custom_capture)
+        barcodeView = findViewById(R.id.barcode_scanner)
         val formats: Collection<BarcodeFormat> =
             Arrays.asList(BarcodeFormat.QR_CODE, BarcodeFormat.CODE_39)
         barcodeView.getBarcodeView().decoderFactory = DefaultDecoderFactory(formats)
-        barcodeView.viewFinder.setLaserVisibility(true)
-
         barcodeView.initializeFromIntent(intent)
         barcodeView.decodeContinuous(callback)
-        val save_btn = findViewById<Button>(R.id.save_photo)
-//        val save_btn = findViewById<de.hdodenhof.circleimageview.CircleImageView>(R.id.save_photo)
-        save_btn.setOnClickListener{
-            Toast.makeText(applicationContext, "Saved!", Toast.LENGTH_SHORT).show()
+        beepManager = BeepManager(this)
+//        val save_btn = findViewById<Button>(R.id.save)
+        val save_btn = findViewById<de.hdodenhof.circleimageview.CircleImageView>(R.id.save)
+        save_btn.setOnClickListener {
             barcodeView.barcodeView.cameraInstance.requestPreview(object : PreviewCallback {
                 override fun onPreview(sourceData: SourceData) {
-                    val r: Rect= Rect()
-                    Log.e("measuredHeight",barcodeView.viewFinder.measuredHeight.toString())
-                    Log.e("Height",barcodeView.viewFinder.height.toString())
-                    Log.e("minimumHeight",barcodeView.viewFinder.minimumHeight.toString())
-                    Log.e("measuredWidth",barcodeView.viewFinder.measuredWidth.toString())
-                    Log.e("Width",barcodeView.viewFinder.width.toString())
-                    Log.e("minimumWidth",barcodeView.viewFinder.minimumWidth.toString())
-
-                    Log.e("measuredHeightAndState",barcodeView.viewFinder.measuredHeightAndState.toString())
-                    Log.e("measuredWidthAndState",barcodeView.viewFinder.measuredWidthAndState.toString())
-
-                    Log.e("barcodeViewHeight",barcodeView.barcodeView.measuredHeight.toString())
-                    Log.e("barcodeViewHeight",barcodeView.barcodeView.measuredWidth.toString())
-                    barcodeView.barcodeView.height
-                    val scanBoxRect = barcodeView.viewFinder.getClipBounds(r)
-                    Toast.makeText(applicationContext, "Saved!      "+sourceData.dataHeight.toString()+sourceData.dataWidth.toString(), Toast.LENGTH_SHORT).show()
-                    sourceData.cropRect = Rect(r.left, r.top, r.right, r.bottom)
+                    Log.e("preview width",barcodeView.barcodeView.previewFramingRect.width().toString())
+                    Log.e("preview height",barcodeView.barcodeView.previewFramingRect.height().toString())
+//                    sourceData.cropRect = Rect(0, 0, sourceData.dataHeight, sourceData.dataWidth)
+                    sourceData.cropRect = Rect(barcodeView.barcodeView.previewFramingRect)
                     val bmp = sourceData.bitmap
-                    var bmp1 = cropBitmap(bmp,r)
-                    var base644 = encodeImage(bmp)
-                    Log.e("image",base644!!)
-                    lifecycleScope.launch{
-                        var path = saveBitmapFileForPicturesDir(bmp1!!)
-                        Toast.makeText(applicationContext, path, Toast.LENGTH_SHORT).show()
-                    }
-
                     try {
                         val dir =
                             File(Environment.getExternalStorageDirectory().path + "/MyCaptureDirectory")
                         dir.mkdirs()
                         val filepath = dir.path + String.format("/%d.jpg", System.currentTimeMillis())
                         val stream: OutputStream = FileOutputStream(filepath)
-                        bmp1?.compress(Bitmap.CompressFormat.JPEG, 100, stream)
+                        bmp.compress(Bitmap.CompressFormat.JPEG, 100, stream)
 
                         //Make a Toast with cream cheese
                         val bagel = Toast.makeText(applicationContext, "Saved!", Toast.LENGTH_SHORT)
@@ -152,19 +111,17 @@ class CustomCaptureActivity : AppCompatActivity() {
                     } catch (e: FileNotFoundException) {
                         Log.e("LOGTAG", e.message!!)
                     }
-              }
+                }
 
                 override fun onPreviewError(e: Exception?) {
-                    Log.e("preview error", e?.message!!)
+                    TODO("Not yet implemented")
                 }
             })
-            beepManager = BeepManager(this)
         }
+
     }
 
-
-    // Register the launcher and result handler
-    override  fun onResume() {
+    override fun onResume() {
         super.onResume()
         barcodeView!!.resume()
     }
@@ -189,69 +146,6 @@ class CustomCaptureActivity : AppCompatActivity() {
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         return barcodeView!!.onKeyDown(keyCode, event) || super.onKeyDown(keyCode, event)
     }
-    fun cropBitmap(bitmap: Bitmap, rect: Rect): Bitmap? {
-        return Bitmap.createBitmap(bitmap, rect.left, rect.top, rect.width(), rect.height())
-    }
-
-    fun encodeImage(bm: Bitmap): String? {
-        val baos = ByteArrayOutputStream()
-//        bm.compress(Bitmap.CompressFormat.JPEG, 100, baos)
-        bm.compress(Bitmap.CompressFormat.JPEG, 75, baos)
-        val b = baos.toByteArray()
-        return Base64.encodeToString(b, Base64.DEFAULT)
-    }
-    suspend fun saveBitmapFileForPicturesDir(mBitmap: Bitmap?): String {
-
-        var result = ""
-        if (mBitmap != null) {
-            var base64URL = ConstantsFunction.encodeImage(mBitmap)
-        }
-        withContext(Dispatchers.IO) {
-            if (mBitmap != null) {
-                try {
-                    val fileName = "QuizBank_100000000000.jpg"
-                    val contentValues = ContentValues().apply {
-                        put(MediaStore.Images.Media.DISPLAY_NAME, fileName)
-                        put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                            put(MediaStore.Images.Media.RELATIVE_PATH, Environment.DIRECTORY_PICTURES)
-                        }
-                    }
-
-                    val uri = contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
-                    contentResolver.openOutputStream(uri!!).use { outputStream ->
-                        mBitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
-                    }
-                    result = uri.toString()
-
-                    runOnUiThread {
-                        if (!result.isEmpty()) {
-                            Toast.makeText(
-                                this@CustomCaptureActivity,
-                                "success scan",
-                                Toast.LENGTH_SHORT
-                            ).show()
-
-                        } else {
-                            Toast.makeText(
-                                this@CustomCaptureActivity,
-                                "Something went wrong while saving the file.",
-                                Toast.LENGTH_SHORT
-                            ).show()
-
-                        }
-                    }
-                } catch (e: Exception) {
-                    result = ""
-                    e.printStackTrace()
-
-                }
-            }
-        }
-        return result
-    }
-
-
 }
 
 
