@@ -16,6 +16,7 @@ import android.util.Base64
 import android.util.Log
 import android.view.KeyEvent
 import android.view.View
+import android.view.animation.AnimationUtils
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.Toast
@@ -86,9 +87,13 @@ class CustomCaptureActivity : AppCompatActivity() {
         barcodeView.getBarcodeView().decoderFactory = DefaultDecoderFactory(formats)
         barcodeView.initializeFromIntent(intent)
         barcodeView.decodeContinuous(callback)
+
         beepManager = BeepManager(this)
 //        val save_btn = findViewById<Button>(R.id.save)
         val save_btn = findViewById<de.hdodenhof.circleimageview.CircleImageView>(R.id.save)
+        val scanLineAnimation = AnimationUtils.loadAnimation(this, R.anim.scan_line_animation)
+
+//        barcodeView.viewFinder.animation = scanLineAnimation
         save_btn.setOnClickListener {
             barcodeView.barcodeView.cameraInstance.requestPreview(object : PreviewCallback {
                 override fun onPreview(sourceData: SourceData) {
@@ -108,6 +113,7 @@ class CustomCaptureActivity : AppCompatActivity() {
                         //Make a Toast with cream cheese
                         val bagel = Toast.makeText(applicationContext, "Saved!", Toast.LENGTH_SHORT)
                         bagel.show()
+
                     } catch (e: FileNotFoundException) {
                         Log.e("LOGTAG", e.message!!)
                     }
