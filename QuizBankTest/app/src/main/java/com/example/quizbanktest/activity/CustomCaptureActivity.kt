@@ -20,6 +20,7 @@ import android.view.animation.AnimationUtils
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.example.quizbanktest.R
@@ -87,7 +88,8 @@ class CustomCaptureActivity : AppCompatActivity() {
         barcodeView.getBarcodeView().decoderFactory = DefaultDecoderFactory(formats)
         barcodeView.initializeFromIntent(intent)
         barcodeView.decodeContinuous(callback)
-
+        barcodeView.barcodeView.cameraSettings.isContinuousFocusEnabled = true
+//        barcodeView.getBarcodeView().getCameraSettings().setAutoFocusEnabled(true)
         beepManager = BeepManager(this)
 //        val save_btn = findViewById<Button>(R.id.save)
         val save_btn = findViewById<de.hdodenhof.circleimageview.CircleImageView>(R.id.save)
@@ -95,6 +97,7 @@ class CustomCaptureActivity : AppCompatActivity() {
 
 //        barcodeView.viewFinder.animation = scanLineAnimation
         save_btn.setOnClickListener {
+
             barcodeView.barcodeView.cameraInstance.requestPreview(object : PreviewCallback {
                 override fun onPreview(sourceData: SourceData) {
                     Log.e("preview width",barcodeView.barcodeView.previewFramingRect.width().toString())

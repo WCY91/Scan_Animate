@@ -3,6 +3,7 @@ package com.example.quizbanktest.view
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
+import android.util.Log
 import com.journeyapps.barcodescanner.ViewfinderView
 
 
@@ -74,13 +75,14 @@ class CustomViewfinderView(context: android.content.Context, attrs: android.util
                 paint.alpha = 255
 
                 val middle = frame.top + scannerMiddle
-                val thickness = 6f  // 粗細
+                val thickness = 4f  // 粗細
                 canvas.drawRect(frame.left + 2f, middle - thickness, frame.right - 1f, middle + thickness, paint)
 
-                scannerMiddle += scannerDirection * 5
-                if (scannerMiddle > frame.height() || scannerMiddle < 0) {
+                scannerMiddle += scannerDirection * 8
+                if (scannerMiddle > frame.height() - 5 || scannerMiddle < 5) {
                     scannerDirection *= -1
                 }
+
             }
 
             val scaleX = width / previewSize.width.toFloat()
@@ -129,6 +131,7 @@ class CustomViewfinderView(context: android.content.Context, attrs: android.util
                 frame.right + POINT_SIZE,
                 frame.bottom + POINT_SIZE
             )
+            Log.e("delay", ANIMATION_DELAY.toString())
         }
     }
 
