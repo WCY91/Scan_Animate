@@ -25,6 +25,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.example.quizbanktest.R
 import com.example.quizbanktest.utils.ConstantsFunction
+import com.example.quizbanktest.view.CustomViewfinderView
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.ResultPoint
 import com.google.zxing.client.android.BeepManager
@@ -88,6 +89,7 @@ class CustomCaptureActivity : AppCompatActivity() {
         barcodeView.getBarcodeView().decoderFactory = DefaultDecoderFactory(formats)
         barcodeView.initializeFromIntent(intent)
         barcodeView.decodeContinuous(callback)
+
         barcodeView.barcodeView.cameraSettings.isContinuousFocusEnabled = true
 //        barcodeView.getBarcodeView().getCameraSettings().setAutoFocusEnabled(true)
         beepManager = BeepManager(this)
@@ -97,6 +99,8 @@ class CustomCaptureActivity : AppCompatActivity() {
 
 //        barcodeView.viewFinder.animation = scanLineAnimation
         save_btn.setOnClickListener {
+//            val customViewFinder = findViewById<CustomViewfinderView>(R.id.zxing_viewfinder_view)
+//            customViewFinder.setLaserStart()
 
             barcodeView.barcodeView.cameraInstance.requestPreview(object : PreviewCallback {
                 override fun onPreview(sourceData: SourceData) {

@@ -1,15 +1,16 @@
 package com.example.quizbanktest.view
 
+import android.R
 import android.graphics.Canvas
-import android.graphics.Color
 import android.graphics.Paint
-import android.util.Log
+import androidx.core.content.ContextCompat
 import com.journeyapps.barcodescanner.ViewfinderView
 
 
 class CustomViewfinderView(context: android.content.Context, attrs: android.util.AttributeSet) : ViewfinderView(context, attrs) {
     private var scannerMiddle: Int = 0
     private var scannerDirection = 1
+    private var laserStart = true
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
         refreshSizes()
@@ -43,6 +44,67 @@ class CustomViewfinderView(context: android.content.Context, attrs: android.util
             (frame.bottom + 1).toFloat(),
             paint
         )
+        val borderPaint = Paint(Paint.ANTI_ALIAS_FLAG)
+        borderPaint.color = ContextCompat.getColor(context, R.color.white)
+        val distance = (frame.bottom - frame.top) / 4
+        val thickness = 15
+
+        //top left corner
+
+        //top left corner
+        canvas.drawRect(
+            (frame.left - thickness).toFloat(),
+            (frame.top - thickness).toFloat(), (distance + frame.left).toFloat(),
+            frame.top.toFloat(), borderPaint
+        )
+        canvas.drawRect(
+            (frame.left - thickness).toFloat(),
+            frame.top.toFloat(), frame.left.toFloat(), (distance + frame.top).toFloat(), borderPaint
+        )
+
+        //top right corner
+
+        //top right corner
+        canvas.drawRect(
+            (frame.right - distance).toFloat(),
+            (frame.top - thickness).toFloat(), (frame.right + thickness).toFloat(),
+            frame.top.toFloat(), borderPaint
+        )
+        canvas.drawRect(
+            frame.right.toFloat(),
+            frame.top.toFloat(), (frame.right + thickness).toFloat(),
+            (distance + frame.top).toFloat(), borderPaint
+        )
+
+        //bottom left corner
+
+        //bottom left corner
+        canvas.drawRect(
+            (frame.left - thickness).toFloat(),
+            frame.bottom.toFloat(), (distance + frame.left).toFloat(),
+            (frame.bottom + thickness).toFloat(), borderPaint
+        )
+        canvas.drawRect(
+            (frame.left - thickness).toFloat(),
+            (frame.bottom - distance).toFloat(),
+            frame.left.toFloat(),
+            frame.bottom.toFloat(),
+            borderPaint
+        )
+
+        //bottom right corner
+
+        //bottom right corner
+        canvas.drawRect(
+            (frame.right - distance).toFloat(),
+            frame.bottom.toFloat(),
+            (frame.right + thickness).toFloat(), (frame.bottom + thickness).toFloat(), borderPaint
+        )
+        canvas.drawRect(
+            frame.right.toFloat(),
+            (frame.bottom - distance).toFloat(),
+            (frame.right + thickness).toFloat(), frame.bottom.toFloat(), borderPaint
+        )
         canvas.drawRect(0f, (frame.bottom + 1).toFloat(), width.toFloat(), height.toFloat(), paint)
 
         if (resultBitmap != null) {
@@ -50,25 +112,8 @@ class CustomViewfinderView(context: android.content.Context, attrs: android.util
             paint.alpha = CURRENT_POINT_OPACITY
             canvas.drawBitmap(resultBitmap, null, frame, paint)
         } else {
-            // If wanted, draw a red "laser scanner" line through the middle to show decoding is active
-//            if (laserVisibility) {
-//                paint.color = laserColor
-//                paint.alpha = SCANNER_ALPHA[scannerAlpha]
-//                scannerAlpha = (scannerAlpha + 1) % SCANNER_ALPHA.size
-//                val middle = frame.top + scannerMiddle
-//                canvas.drawRect(
-//                    (frame.left + 2).toFloat(),
-//                    (middle - 1).toFloat(),
-//                    (frame.right - 1).toFloat(),
-//                    (middle + 2).toFloat(),
-//                    paint
-//                )
-//                scannerMiddle += scannerDirection * 5
-//                if (scannerMiddle > frame.height() || scannerMiddle < 0) {
-//                    scannerDirection *= -1
-//                }
-//            }
-            if (true) {
+
+            if (laserStart) {
                 paint.color = laserColor
 //                paint.alpha = SCANNER_ALPHA[scannerAlpha]
 //                scannerAlpha = (scannerAlpha + 1) % SCANNER_ALPHA.size
@@ -131,8 +176,15 @@ class CustomViewfinderView(context: android.content.Context, attrs: android.util
                 frame.right + POINT_SIZE,
                 frame.bottom + POINT_SIZE
             )
-            Log.e("delay", ANIMATION_DELAY.toString())
+
         }
+    }
+
+    fun setLaserStart(){
+        laserStart = true
+    }
+    fun setLaserStop(){
+        laserStart = false
     }
 
 }
